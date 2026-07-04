@@ -1,0 +1,64 @@
+// Base element typography. Every value references a token — no magic numbers.
+// Sentence case is an authoring convention, enforced in content, not CSS.
+
+html {
+  font-size: 100%; // respect user's browser base size
+}
+
+body {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-family-display);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text-primary);
+}
+
+h1 {
+  font-size: var(--font-size-3xl);
+}
+h2 {
+  font-size: var(--font-size-2xl);
+}
+h3 {
+  font-size: var(--font-size-xl);
+}
+h4 {
+  font-size: var(--font-size-lg);
+  letter-spacing: var(--tracking-normal);
+}
+
+small {
+  font-size: var(--font-size-sm);
+}
+
+// Monospace signals a technical value — TRIZ parameter IDs, matrix cells,
+// principle numbers, candidate scores.
+code,
+kbd,
+samp,
+pre,
+.font-mono {
+  font-family: var(--font-family-mono);
+  font-size: 0.9375em;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

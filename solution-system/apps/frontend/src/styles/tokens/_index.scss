@@ -1,0 +1,5 @@
+// Token barrel. Emission order matters: primitives first so the semantic
+// tier can reference them. Contextual (component) tokens are added here once
+// components are built.
+@forward 'primitives';
+@forward 'semantic';

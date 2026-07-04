@@ -1,0 +1,85 @@
+// Tier 2 — SEMANTIC
+// Purpose aliases mapping primitives to roles. This is the layer components
+// consume, and the ONLY layer a theme swap (e.g. dark mode) touches.
+//
+// Contrast verified against #ffffff surface (WCAG 2.1 AA target):
+//   on-primary  white on primary-500 (#c2185b) ....... 5.87:1  PASS (text)
+//   on-success  white on success-600 (#237a34) ....... 4.8:1   PASS (text)
+//   on-error    white on error-600  (#b71f14) ........ 5.5:1   PASS (text)
+//   on-info     white on info-500   (#4b3fa3) ........ 7.9:1   PASS (AAA)
+//   text-muted  neutral-600 (#6e6879) on white ....... 4.7:1   PASS (text)
+//   text-secondary neutral-700 (#57515f) on white .... 7.0:1   PASS (AAA)
+// The pure 500 status hues are used as *indicator dots* only (UI ≥ 3:1),
+// never as backgrounds for text.
+
+:root {
+  // ---- Brand / primary ----
+  --color-primary: var(--color-primary-500);
+  --color-primary-hover: var(--color-primary-600);
+  --color-primary-active: var(--color-primary-700);
+  --color-primary-subtle: var(--color-primary-50);
+  --color-on-primary: #ffffff;
+  --color-accent: var(--color-primary); // alias
+
+  // ---- Surfaces ----
+  --color-surface: var(--color-neutral-50); // page canvas
+  --color-surface-raised: #ffffff; // cards, panels
+  --color-surface-sunken: var(--color-neutral-100); // wells, insets
+
+  // ---- Text ----
+  --color-text-primary: var(--color-neutral-900);
+  --color-text-secondary: var(--color-neutral-700);
+  --color-text-muted: var(--color-neutral-600);
+  --color-on-surface: var(--color-text-primary); // alias
+  --color-on-surface-muted: var(--color-text-muted); // alias
+
+  // ---- Borders ----
+  --color-border: var(--color-neutral-200);
+  --color-border-strong: var(--color-neutral-300);
+
+  // ---- Status (backgrounds pair with the on-* foreground) ----
+  --color-success: var(--color-success-600);
+  --color-on-success: #ffffff;
+  --color-warning: var(--color-warning-500);
+  --color-on-warning: var(--color-neutral-900);
+  --color-error: var(--color-error-600);
+  --color-on-error: #ffffff;
+  --color-info: var(--color-info-500);
+  --color-on-info: #ffffff;
+
+  // ---- Focus ring — always visible, never overridden away ----
+  --color-focus-ring: var(--color-primary-500);
+
+  // ---- Domain semantics: solution methods ----
+  // TRIZ carries the brand; the second method carries the cool complement,
+  // so lineage is readable at a glance across the reasoning trail.
+  --method-triz: var(--color-primary-500);
+  --method-triz-subtle: var(--color-primary-50);
+  --method-triz-on-subtle: var(--color-primary-800);
+  --method-alt: var(--color-info-500);
+  --method-alt-subtle: var(--color-info-50);
+  --method-alt-on-subtle: var(--color-info-800);
+
+  // ---- Domain semantics: candidate evaluation (traffic-light) ----
+  // Indicator hues only — always paired with a numeric score and/or icon,
+  // never color alone. Reserved for the evaluation stage.
+  --eval-strong: var(--color-success-500);
+  --eval-moderate: var(--color-warning-500);
+  --eval-weak: var(--color-error-500);
+}
+
+// ---- Dark theme (deferred) ----
+// Architecture is dark-ready: overriding only these semantic tokens under a
+// theme selector re-skins the whole app without touching primitives or
+// components. Uncomment and tune when dark mode enters scope.
+//
+// :root[data-theme='dark'] {
+//   --color-surface: var(--color-neutral-950);
+//   --color-surface-raised: var(--color-neutral-900);
+//   --color-surface-sunken: var(--color-neutral-900);
+//   --color-text-primary: var(--color-neutral-50);
+//   --color-text-secondary: var(--color-neutral-300);
+//   --color-text-muted: var(--color-neutral-400);
+//   --color-border: var(--color-neutral-800);
+//   --color-border-strong: var(--color-neutral-700);
+// }

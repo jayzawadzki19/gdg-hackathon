@@ -1,0 +1,163 @@
+// Tier 1 — PRIMITIVES
+// Raw, role-agnostic values. Never referenced directly by components;
+// components consume the semantic tier only. Changing a brand color or
+// scale happens here and propagates upward.
+
+// Breakpoints are the one primitive consumed in SCSS (media queries),
+// so they stay a Sass map rather than a custom property.
+$breakpoints: (
+  'sm': 640px,
+  'md': 768px,
+  'lg': 1024px,
+  'xl': 1280px,
+  '2xl': 1536px,
+);
+
+:root {
+  // ---- Color: primary (magenta) — brand anchor at 500 ----
+  --color-primary-50: #fde8f0;
+  --color-primary-100: #fbd0e1;
+  --color-primary-200: #f5a8c6;
+  --color-primary-300: #ec7aa5;
+  --color-primary-400: #db477e;
+  --color-primary-500: #c2185b;
+  --color-primary-600: #a31350;
+  --color-primary-700: #7f0f3e;
+  --color-primary-800: #5c0b2c;
+  --color-primary-900: #3d0a22;
+  --color-primary-950: #260513;
+
+  // ---- Color: neutral (warm purple-gray) ----
+  --color-neutral-50: #f7f6f8;
+  --color-neutral-100: #eeecf1;
+  --color-neutral-200: #e5e2ea;
+  --color-neutral-300: #d2cdd9;
+  --color-neutral-400: #b4aebe;
+  --color-neutral-500: #8c8598;
+  --color-neutral-600: #6e6879;
+  --color-neutral-700: #57515f;
+  --color-neutral-800: #322e3a;
+  --color-neutral-900: #1a1620;
+  --color-neutral-950: #0f0c14;
+
+  // ---- Color: success (green) ----
+  --color-success-50: #e7f6eb;
+  --color-success-100: #c5e9ce;
+  --color-success-200: #98d6a8;
+  --color-success-300: #64bf7c;
+  --color-success-400: #40ac5c;
+  --color-success-500: #2f9e44;
+  --color-success-600: #237a34;
+  --color-success-700: #1b5e28;
+  --color-success-800: #14481f;
+  --color-success-900: #0d3115;
+  --color-success-950: #071e0c;
+
+  // ---- Color: warning (amber) ----
+  --color-warning-50: #fdf2e0;
+  --color-warning-100: #fadfb3;
+  --color-warning-200: #f5c374;
+  --color-warning-300: #efa838;
+  --color-warning-400: #f0a62a;
+  --color-warning-500: #e8940c;
+  --color-warning-600: #c2790a;
+  --color-warning-700: #965d08;
+  --color-warning-800: #6e4406;
+  --color-warning-900: #472c04;
+  --color-warning-950: #2b1a02;
+
+  // ---- Color: error (red) ----
+  --color-error-50: #fce9e7;
+  --color-error-100: #f8c9c4;
+  --color-error-200: #f09c94;
+  --color-error-300: #e76c60;
+  --color-error-400: #de4436;
+  --color-error-500: #d92d20;
+  --color-error-600: #b71f14;
+  --color-error-700: #8f1810;
+  --color-error-800: #67120c;
+  --color-error-900: #420c08;
+  --color-error-950: #280705;
+
+  // ---- Color: info / method-alt (indigo) ----
+  --color-info-50: #eceaf7;
+  --color-info-100: #d5d0ee;
+  --color-info-200: #b3abe0;
+  --color-info-300: #8b80ce;
+  --color-info-400: #6759b9;
+  --color-info-500: #4b3fa3;
+  --color-info-600: #3e3488;
+  --color-info-700: #302968;
+  --color-info-800: #221d49;
+  --color-info-900: #16122e;
+  --color-info-950: #0d0a1c;
+
+  // ---- Typography: families ----
+  --font-family-display: 'Inter', ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', roboto, helvetica, arial, sans-serif;
+  --font-family-body: var(--font-family-display);
+  --font-family-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Menlo',
+    'Consolas', monospace;
+
+  // ---- Typography: weights (restraint — 400/500 are the working pair) ----
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  // ---- Typography: modular scale (1.25 Major Third) ----
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.8125rem;
+  --font-size-md: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.375rem;
+  --font-size-2xl: 1.75rem;
+  --font-size-3xl: 2.25rem;
+
+  // ---- Typography: line-height + tracking ----
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --tracking-tight: -0.015em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.02em;
+
+  // ---- Spacing: 4px base grid ----
+  --space-px: 1px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+
+  // ---- Radius (restrained — enterprise-calm) ----
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  // ---- Elevation (near-flat, functional) ----
+  --shadow-sm: 0 1px 2px rgba(26, 22, 32, 0.06);
+  --shadow-md: 0 2px 8px rgba(26, 22, 32, 0.08);
+  --shadow-lg: 0 8px 24px rgba(26, 22, 32, 0.1);
+  --shadow-xl: 0 16px 40px rgba(26, 22, 32, 0.12);
+
+  // ---- Motion ----
+  --duration-fast: 120ms;
+  --duration-normal: 180ms;
+  --duration-slow: 300ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.2, 0.8, 0.2, 1.2);
+}

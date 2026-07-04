@@ -1,1 +1,7 @@
-/* You can add global styles to this file, and also import other style files */
+// Global entry point. Load order: tokens define the vocabulary, then base
+// layers consume it. Component styles reference the resulting CSS custom
+// properties globally — they never import token partials directly.
+@use 'styles/tokens/index';
+@use 'styles/base/reset';
+@use 'styles/base/accessibility';
+@use 'styles/base/typography';
