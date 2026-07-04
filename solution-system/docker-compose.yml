@@ -1,11 +1,27 @@
 services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      PORT: 3000
+      ADK_AGENT_URL: http://adk-agent:8081
+    ports:
+      - "3000:3000"
+    depends_on:
+      - adk-agent
+
   adk-agent:
     build:
       context: ./adg-agents
     environment:
-      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      GOOGLE_GENAI_API_KEY: ${GOOGLE_GENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GOOGLE_API_KEY:-}
+      MCP_SERVER_URL: http://mcp-server:8000/mcp
     ports:
       - "8081:8081"
+    depends_on:
+      - mcp-server
 
   mcp-server:
     build:

@@ -11,6 +11,12 @@
     "jest.config.cts",
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "src/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    }
   ]
 }
