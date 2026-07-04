@@ -12,8 +12,9 @@
     "module": "esnext",
     "lib": ["es2020", "dom"],
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true,
-    "paths": {}
+    "paths": {
+      "@solution-system/api-interfaces": ["libs/api-interfaces/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
