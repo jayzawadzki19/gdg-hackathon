@@ -1,0 +1,122 @@
+// Rendered markdown (agent chat replies). Global because the HTML is
+// injected via [innerHTML] and never receives Angular's emulated-
+// encapsulation attributes, so component styles cannot reach it.
+.markdown-body {
+  > :first-child {
+    margin-block-start: 0;
+  }
+
+  > :last-child {
+    margin-block-end: 0;
+  }
+
+  p,
+  ul,
+  ol,
+  pre,
+  blockquote,
+  table {
+    margin-block: var(--space-2);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-block: var(--space-3) var(--space-2);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+  }
+
+  h1 {
+    font-size: var(--font-size-lg);
+  }
+
+  h2 {
+    font-size: var(--font-size-base);
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: var(--font-size-md);
+  }
+
+  ul,
+  ol {
+    padding-inline-start: var(--space-5);
+  }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
+
+  li + li {
+    margin-block-start: var(--space-1);
+  }
+
+  code {
+    padding: 0 var(--space-1);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunken);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-sm);
+  }
+
+  pre {
+    padding: var(--space-3);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-sunken);
+    overflow-x: auto;
+
+    code {
+      padding: 0;
+      background: none;
+    }
+  }
+
+  blockquote {
+    margin-inline: 0;
+    padding-inline-start: var(--space-3);
+    border-inline-start: 3px solid var(--color-border-strong);
+    color: var(--color-text-secondary);
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  table {
+    display: block; // wide tables scroll instead of stretching the bubble
+    max-width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+
+  th,
+  td {
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--color-border);
+    text-align: left;
+  }
+
+  th {
+    background: var(--color-surface-sunken);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  hr {
+    margin-block: var(--space-3);
+    border: none;
+    border-top: 1px solid var(--color-border);
+  }
+}

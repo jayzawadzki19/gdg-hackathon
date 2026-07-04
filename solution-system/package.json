@@ -21,9 +21,15 @@
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/sequelize": "^11.0.1",
     "axios": "^1.6.0",
+    "marked": "^18.0.5",
+    "pg": "^8.22.0",
+    "pg-hstore": "^2.3.4",
     "reflect-metadata": "^0.2.0",
-    "rxjs": "~7.8.0"
+    "rxjs": "~7.8.0",
+    "sequelize": "^6.37.8",
+    "sequelize-typescript": "^2.1.6"
   },
   "devDependencies": {
     "@angular-devkit/core": "~21.2.0",

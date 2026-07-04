@@ -1,17 +1,29 @@
 export type ChatRole = 'user' | 'assistant';
 
 export interface ChatMessage {
+  id?: number;
   role: ChatRole;
   text: string;
+  createdAt?: string;
 }
 
-// Mirrors apps/api/src/app/agent.dto.ts — keep in sync manually.
-export interface AgentMessageRequest {
+export interface ChatSummary {
+  id: number;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ChatDetail extends ChatSummary {
+  messages: ChatMessage[];
+}
+
+export interface SendChatMessageRequest {
   message: string;
-  sessionId?: string;
 }
 
-export interface AgentMessageResponse {
-  sessionId: string;
-  text: string;
+export interface SendChatMessageResponse {
+  chatId: number;
+  title: string;
+  messages: ChatMessage[];
 }

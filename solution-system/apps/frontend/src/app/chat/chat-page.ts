@@ -7,11 +7,13 @@ import {
   viewChild,
 } from '@angular/core';
 import { ChatService } from './chat.service';
+import { MarkdownPipe } from './markdown.pipe';
 
 @Component({
   selector: 'app-chat-page',
   templateUrl: './chat-page.html',
   styleUrl: './chat-page.scss',
+  imports: [MarkdownPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChatPage {
@@ -22,9 +24,8 @@ export class ChatPage {
     viewChild.required<ElementRef<HTMLTextAreaElement>>('input');
 
   constructor() {
-    // Keep the log scrolled to the newest message. Runs after render, so the
-    // new bubble is already in the DOM; instant jump (no smooth behavior), so
-    // reduced-motion needs no special casing here.
+    void this.chat.loadChats();
+
     afterRenderEffect(() => {
       this.chat.messages();
       this.chat.pending();
@@ -33,13 +34,26 @@ export class ChatPage {
     });
   }
 
+  protected createChat(): void {
+    void this.chat.createChat();
+    this.focusInput();
+  }
+
+  protected selectChat(chatId: number): void {
+    if (this.chat.selectedChatId() === chatId || this.chat.pending()) {
+      return;
+    }
+
+    void this.chat.selectChat(chatId);
+    this.focusInput();
+  }
+
   protected onSubmit(event: Event): void {
     event.preventDefault();
     this.sendCurrent();
   }
 
   protected onKeydown(event: KeyboardEvent): void {
-    // Enter sends; Shift+Enter falls through to insert a newline.
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       this.sendCurrent();
@@ -58,13 +72,16 @@ export class ChatPage {
     void this.chat.send(textarea.value);
     textarea.value = '';
     this.resizeInput();
-    textarea.focus();
+    this.focusInput();
   }
 
-  // Auto-grow: collapse, then track content height (capped in CSS).
   private resizeInput(): void {
     const textarea = this.inputRef().nativeElement;
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
+  }
+
+  private focusInput(): void {
+    this.inputRef().nativeElement.focus();
   }
 }

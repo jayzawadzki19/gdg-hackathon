@@ -22,72 +22,159 @@ describe('ChatService', () => {
     httpMock.verify();
   });
 
-  it('sends the message and appends the assistant reply', async () => {
-    const sendPromise = service.send('Hello');
+  it('loads chats and selects the newest chat', async () => {
+    const promise = service.loadChats();
 
-    // User message appears optimistically, before the response arrives.
-    expect(service.messages()).toEqual([{ role: 'user', text: 'Hello' }]);
-    expect(service.pending()).toBe(true);
+    httpMock.expectOne('/api/chats').flush([
+      {
+        id: 1,
+        title: 'First chat',
+        createdAt: '2026-07-04T10:00:00.000Z',
+        updatedAt: '2026-07-04T10:05:00.000Z',
+      },
+    ]);
+    await Promise.resolve(); // let the first await resolve so selectChat issues its request
+    httpMock.expectOne('/api/chats/1').flush({
+      id: 1,
+      title: 'First chat',
+      createdAt: '2026-07-04T10:00:00.000Z',
+      updatedAt: '2026-07-04T10:05:00.000Z',
+      messages: [{ id: 1, role: 'user', text: 'Hello' }],
+    });
 
-    const req = httpMock.expectOne('/api/agent/messages');
-    expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({ message: 'Hello' });
-    req.flush({ sessionId: 's-1', text: 'Hi there' });
-    await sendPromise;
+    await promise;
+
+    expect(service.chats().length).toBe(1);
+    expect(service.selectedChatId()).toBe(1);
+    expect(service.messages()).toEqual([{ id: 1, role: 'user', text: 'Hello' }]);
+  });
+
+  it('leaves the message list empty when no chats exist', async () => {
+    const promise = service.loadChats();
+
+    httpMock.expectOne('/api/chats').flush([]);
+    await promise;
+
+    expect(service.chats()).toEqual([]);
+    expect(service.selectedChatId()).toBeNull();
+    expect(service.messages()).toEqual([]);
+  });
+
+  it('creates and selects a new chat', async () => {
+    const promise = service.createChat();
+
+    httpMock.expectOne('/api/chats').flush({
+      id: 2,
+      title: 'New chat',
+      createdAt: '2026-07-04T11:00:00.000Z',
+      updatedAt: '2026-07-04T11:00:00.000Z',
+    });
+
+    await promise;
+
+    expect(service.selectedChatId()).toBe(2);
+    expect(service.messages()).toEqual([]);
+    expect(service.chats()[0].id).toBe(2);
+  });
+
+  it('selects a chat and replaces messages with loaded history', async () => {
+    const promise = service.selectChat(3);
+
+    httpMock.expectOne('/api/chats/3').flush({
+      id: 3,
+      title: 'Loaded',
+      createdAt: '2026-07-04T12:00:00.000Z',
+      updatedAt: '2026-07-04T12:01:00.000Z',
+      messages: [{ id: 5, role: 'assistant', text: 'Loaded answer' }],
+    });
+
+    await promise;
+
+    expect(service.selectedChatId()).toBe(3);
+    expect(service.messages()).toEqual([
+      { id: 5, role: 'assistant', text: 'Loaded answer' },
+    ]);
+  });
+
+  it('creates a chat before sending when none is selected', async () => {
+    const promise = service.send('Hello');
+
+    httpMock.expectOne('/api/chats').flush({
+      id: 4,
+      title: 'New chat',
+      createdAt: '2026-07-04T13:00:00.000Z',
+      updatedAt: '2026-07-04T13:00:00.000Z',
+    });
+    await Promise.resolve(); // let createChat resolve so send issues its request
+    await Promise.resolve(); // let send resume after createChat and issue messages request
+    const sendRequest = httpMock.expectOne('/api/chats/4/messages');
+    expect(sendRequest.request.body).toEqual({ message: 'Hello' });
+    sendRequest.flush({
+      chatId: 4,
+      title: 'Hello',
+      messages: [
+        { id: 6, role: 'user', text: 'Hello' },
+        { id: 7, role: 'assistant', text: 'Hi there' },
+      ],
+    });
+
+    await promise;
+
+    expect(service.selectedChatId()).toBe(4);
+    expect(service.chats()[0].title).toBe('Hello');
+    expect(service.messages()).toEqual([
+      { id: 6, role: 'user', text: 'Hello' },
+      { id: 7, role: 'assistant', text: 'Hi there' },
+    ]);
+  });
+
+  it('sends into the selected chat', async () => {
+    const created = service.createChat();
+    httpMock.expectOne('/api/chats').flush({
+      id: 5,
+      title: 'Existing',
+      createdAt: '2026-07-04T14:00:00.000Z',
+      updatedAt: '2026-07-04T14:00:00.000Z',
+    });
+    await created;
+
+    const promise = service.send('Continue');
+    const request = httpMock.expectOne('/api/chats/5/messages');
+    expect(request.request.body).toEqual({ message: 'Continue' });
+    request.flush({
+      chatId: 5,
+      title: 'Existing',
+      messages: [
+        { id: 8, role: 'user', text: 'Continue' },
+        { id: 9, role: 'assistant', text: 'Sure' },
+      ],
+    });
+    await promise;
 
     expect(service.messages()).toEqual([
-      { role: 'user', text: 'Hello' },
-      { role: 'assistant', text: 'Hi there' },
+      { id: 8, role: 'user', text: 'Continue' },
+      { id: 9, role: 'assistant', text: 'Sure' },
     ]);
-    expect(service.pending()).toBe(false);
-    expect(service.error()).toBeNull();
   });
 
-  it('includes the stored sessionId on subsequent sends', async () => {
-    const first = service.send('First');
-    httpMock
-      .expectOne('/api/agent/messages')
-      .flush({ sessionId: 's-1', text: 'Reply 1' });
-    await first;
+  it('sets an error and clears pending when send fails', async () => {
+    const promise = service.send('Hello');
 
-    const second = service.send('Second');
-    const req = httpMock.expectOne('/api/agent/messages');
-    expect(req.request.body).toEqual({ message: 'Second', sessionId: 's-1' });
-    req.flush({ sessionId: 's-1', text: 'Reply 2' });
-    await second;
-  });
-
-  it('sets an error and keeps the user message when the request fails', async () => {
-    const sendPromise = service.send('Hello');
+    httpMock.expectOne('/api/chats').flush({
+      id: 6,
+      title: 'New chat',
+      createdAt: '2026-07-04T15:00:00.000Z',
+      updatedAt: '2026-07-04T15:00:00.000Z',
+    });
+    await Promise.resolve(); // let createChat resolve so send issues its request
+    await Promise.resolve(); // let send resume after createChat and issue messages request
     httpMock
-      .expectOne('/api/agent/messages')
+      .expectOne('/api/chats/6/messages')
       .flush('boom', { status: 502, statusText: 'Bad Gateway' });
-    await sendPromise;
 
-    expect(service.messages()).toEqual([{ role: 'user', text: 'Hello' }]);
-    expect(service.error()).toBe('Something went wrong — try again.');
+    await promise;
+
+    expect(service.error()).toBe('Something went wrong - try again.');
     expect(service.pending()).toBe(false);
-  });
-
-  it('clears the previous error on the next send', async () => {
-    const failed = service.send('Hello');
-    httpMock
-      .expectOne('/api/agent/messages')
-      .flush('boom', { status: 502, statusText: 'Bad Gateway' });
-    await failed;
-    expect(service.error()).not.toBeNull();
-
-    const retry = service.send('Hello again');
-    expect(service.error()).toBeNull();
-    httpMock
-      .expectOne('/api/agent/messages')
-      .flush({ sessionId: 's-1', text: 'Hi' });
-    await retry;
-  });
-
-  it('ignores empty input', async () => {
-    await service.send('   ');
-    httpMock.expectNone('/api/agent/messages');
-    expect(service.messages()).toEqual([]);
   });
 });

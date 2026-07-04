@@ -50,7 +50,7 @@ export class AgentService {
     };
   }
 
-  private async createSession(): Promise<string> {
+  async createSession(): Promise<string> {
     try {
       const response = await axios.post<AdkSessionResponse>(
         `${this.adkAgentUrl}/apps/agent/users/user/sessions`,
@@ -68,7 +68,7 @@ export class AgentService {
     }
   }
 
-  private async runAgent(sessionId: string, message: string): Promise<string> {
+  async runAgent(sessionId: string, message: string): Promise<string> {
     try {
       const response = await axios.post<string>(
         `${this.adkAgentUrl}/run_sse`,
@@ -95,7 +95,7 @@ export class AgentService {
     }
   }
 
-  private extractModelText(eventStream: string): string {
+  extractModelText(eventStream: string): string {
     const modelTexts = eventStream
       .split(/\r?\n/)
       .map((line) => line.trim())
