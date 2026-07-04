@@ -20,6 +20,8 @@ interface AdkEventPart {
 
 interface AdkEvent {
   author?: string;
+  errorCode?: string;
+  errorMessage?: string;
   content?: {
     parts?: AdkEventPart[];
   };
@@ -112,20 +114,33 @@ export class AgentService {
   }
 
   private parseEventText(payload: string): string[] {
+    let event: AdkEvent;
+
     try {
-      const event = JSON.parse(payload) as AdkEvent;
-
-      if (!event.author || event.author === 'user') {
-        return [];
-      }
-
-      return (
-        event.content?.parts
-          ?.map((part) => part.text?.trim())
-          .filter((text): text is string => Boolean(text)) ?? []
-      );
+      event = JSON.parse(payload) as AdkEvent;
     } catch {
       return [];
     }
+
+    if (event.errorCode || event.errorMessage) {
+      throw new BadGatewayException(this.formatAdkError(event));
+    }
+
+    if (!event.author || event.author === 'user') {
+      return [];
+    }
+
+    return (
+      event.content?.parts
+        ?.map((part) => part.text?.trim())
+        .filter((text): text is string => Boolean(text)) ?? []
+    );
+  }
+
+  private formatAdkError(event: AdkEvent): string {
+    const code = event.errorCode ? ` ${event.errorCode}` : '';
+    const message = event.errorMessage ? `: ${event.errorMessage}` : '';
+
+    return `ADK error${code}${message}`;
   }
 }

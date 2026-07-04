@@ -1,4 +1,13 @@
 services:
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+
   api:
     build:
       context: .
@@ -9,7 +18,8 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - adk-agent
+      adk-agent:
+        condition: service_healthy
 
   adk-agent:
     build:
@@ -20,11 +30,32 @@ services:
       MCP_SERVER_URL: http://mcp-server:8000/mcp
     ports:
       - "8081:8081"
+    healthcheck:
+      test:
+        - "CMD"
+        - "node"
+        - "-e"
+        - "require('net').createConnection(8081,'localhost').on('connect',()=>process.exit(0)).on('error',()=>process.exit(1))"
+      interval: 3s
+      timeout: 3s
+      retries: 15
+      start_period: 5s
     depends_on:
-      - mcp-server
+      mcp-server:
+        condition: service_healthy
 
   mcp-server:
     build:
       context: ./mcp-server
     ports:
       - "8000:8000"
+    healthcheck:
+      test:
+        - "CMD"
+        - "python"
+        - "-c"
+        - "import socket; s=socket.socket(); s.settimeout(2); s.connect(('localhost', 8000)); s.close()"
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 10s

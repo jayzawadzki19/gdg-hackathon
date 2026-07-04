@@ -22,4 +22,6 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 EXPOSE 8000
 
-CMD ["uv", "run", "python", "app/main.py"]
+ENV PATH="/app/.venv/bin:$PATH"
+
+CMD ["python", "app/main.py"]

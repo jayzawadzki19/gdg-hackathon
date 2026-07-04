@@ -2,7 +2,14 @@
   "name": "@solution-system/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start": "nx run-many -t serve -p api frontend",
+    "start:api": "nx serve api",
+    "start:frontend": "nx serve frontend",
+    "build": "nx run-many -t build -p api frontend",
+    "test": "nx run-many -t test -p api frontend",
+    "lint": "nx run-many -t lint -p api frontend"
+  },
   "private": true,
   "dependencies": {
     "@angular/common": "~21.2.0",

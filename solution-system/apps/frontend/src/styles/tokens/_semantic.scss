@@ -44,6 +44,8 @@
   --color-on-warning: var(--color-neutral-900);
   --color-error: var(--color-error-600);
   --color-on-error: #ffffff;
+  --color-error-subtle: var(--color-error-50);
+  --color-on-error-subtle: var(--color-error-700); // 7.6:1 on error-50 — AA pass
   --color-info: var(--color-info-500);
   --color-on-info: #ffffff;
 

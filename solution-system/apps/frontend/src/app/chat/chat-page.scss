@@ -1,0 +1,198 @@
+:host {
+  display: block;
+  height: 100dvh;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 48rem;
+  margin-inline: auto;
+}
+
+.chat__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-surface-raised);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.chat__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+}
+
+.chat__subtitle {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.chat__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0; // allow the log to shrink and scroll
+  padding: var(--space-4) var(--space-6) var(--space-6);
+}
+
+.chat__log {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+  padding-block: var(--space-2);
+  overflow-y: auto;
+}
+
+.chat__empty {
+  margin: auto;
+  color: var(--color-text-muted);
+}
+
+.chat__message {
+  display: flex;
+  max-width: 85%;
+}
+
+.chat__message--user {
+  align-self: flex-end;
+}
+
+.chat__message--assistant {
+  align-self: flex-start;
+}
+
+.chat__bubble {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.chat__message--user .chat__bubble {
+  background: var(--color-primary);
+  border-end-end-radius: var(--radius-sm);
+  color: var(--color-on-primary);
+}
+
+.chat__message--assistant .chat__bubble {
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-end-start-radius: var(--radius-sm);
+  color: var(--color-text-primary);
+}
+
+// Thinking indicator — decorative; the global reduced-motion rule freezes it,
+// and pending state is still conveyed by the sr-only text + disabled button.
+.chat__bubble--thinking {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.chat__dot {
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: var(--radius-full);
+  background: var(--color-text-muted);
+  animation: chat-dot-pulse var(--duration-slow) var(--ease-in-out) infinite
+    alternate;
+}
+
+.chat__dot:nth-child(2) {
+  animation-delay: calc(var(--duration-slow) / 3);
+}
+
+.chat__dot:nth-child(3) {
+  animation-delay: calc(var(--duration-slow) * 2 / 3);
+}
+
+@keyframes chat-dot-pulse {
+  from {
+    opacity: 0.3;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.chat__error {
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-error-subtle);
+  color: var(--color-on-error-subtle);
+  font-size: var(--font-size-md);
+}
+
+.chat__composer {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+
+  // The textarea's own outline is suppressed below, so the composer as a
+  // whole must carry a clearly visible focus indicator.
+  &:focus-within {
+    outline: 3px solid var(--color-focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.chat__input {
+  flex: 1;
+  max-height: 10rem;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  resize: none;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:focus-visible {
+    outline: none; // indicator carried by .chat__composer:focus-within
+  }
+}
+
+.chat__send {
+  min-height: var(--space-10);
+  padding: var(--space-2) var(--space-5);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out);
+
+  &:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+  }
+
+  &:active:not(:disabled) {
+    background: var(--color-primary-active);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}

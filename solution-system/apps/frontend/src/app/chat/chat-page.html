@@ -1,0 +1,58 @@
+<div class="chat">
+  <header class="chat__header">
+    <h1 class="chat__title">Solution system</h1>
+    <p class="chat__subtitle">Agent chat</p>
+  </header>
+
+  <main id="main-content" class="chat__main">
+    <div
+      #log
+      class="chat__log"
+      role="log"
+      aria-live="polite"
+      aria-label="Conversation"
+    >
+      @if (chat.messages().length === 0 && !chat.pending()) {
+        <p class="chat__empty">Ask the agent anything to get started.</p>
+      }
+      @for (message of chat.messages(); track $index) {
+        <article class="chat__message chat__message--{{ message.role }}">
+          <span class="sr-only">
+            {{ message.role === 'user' ? 'You' : 'Assistant' }}:
+          </span>
+          <p class="chat__bubble">{{ message.text }}</p>
+        </article>
+      }
+      @if (chat.pending()) {
+        <article class="chat__message chat__message--assistant">
+          <span class="sr-only">Assistant is typing</span>
+          <p class="chat__bubble chat__bubble--thinking" aria-hidden="true">
+            <span class="chat__dot"></span>
+            <span class="chat__dot"></span>
+            <span class="chat__dot"></span>
+          </p>
+        </article>
+      }
+    </div>
+
+    @if (chat.error(); as errorText) {
+      <p class="chat__error" role="alert">{{ errorText }}</p>
+    }
+
+    <form class="chat__composer" (submit)="onSubmit($event)">
+      <label class="sr-only" for="chat-input">Message the agent</label>
+      <textarea
+        #input
+        id="chat-input"
+        class="chat__input"
+        rows="1"
+        placeholder="Message the agent…"
+        (keydown)="onKeydown($event)"
+        (input)="onInput()"
+      ></textarea>
+      <button class="chat__send" type="submit" [disabled]="chat.pending()">
+        Send
+      </button>
+    </form>
+  </main>
+</div>

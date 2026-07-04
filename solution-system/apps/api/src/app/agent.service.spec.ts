@@ -144,4 +144,23 @@ describe('AgentService', () => {
       BadGatewayException,
     );
   });
+
+  it('surfaces ADK error events from the stream', async () => {
+    mockedAxios.post
+      .mockResolvedValueOnce({ data: { id: 'new-session' } })
+      .mockResolvedValueOnce({
+        data: [
+          'data: {"author":"root_agent","errorCode":"429","errorMessage":"Quota exceeded"}',
+          '',
+        ].join('\n'),
+      });
+
+    const service = new AgentService();
+
+    await expect(service.sendMessage({ message: 'Question' })).rejects.toMatchObject({
+      response: {
+        message: 'ADK error 429: Quota exceeded',
+      },
+    });
+  });
 });
